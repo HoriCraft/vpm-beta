@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>MeshEraser テスト版</title>
+  <style>
+    :root {
+      --bg: #f7f8fa; --text: #242d38; --sub: #526070; --line: #cbd3dc;
+      --card: #ffffff; --notice: #fff4e0; --notice-line: #d08a1e;
+      --accent: #2563c9; --accent-text: #ffffff; --accent-hover: #1d50a5;
+      --ghost: #e4e8ed; --code: #eef1f5;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #17191d; --text: #dfe4ec; --sub: #9aa5b3; --line: #353b45;
+        --card: #20242a; --notice: #2c2416; --notice-line: #d39a3a;
+        --accent: #4a8dff; --accent-text: #ffffff; --accent-hover: #6aa2ff;
+        --ghost: #2a2f37; --code: #2a2f37;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, "Yu Gothic UI", "Hiragino Sans", sans-serif; line-height: 1.8; }
+    main { max-width: 42rem; margin: auto; padding: 2.5rem 1rem 3rem; }
+    h1 { margin: 0 0 .25rem; font-size: 1.8rem; }
+    .lead { margin: 0 0 1.25rem; color: var(--sub); }
+    h2 { margin: 2rem 0 .5rem; font-size: 1.15rem; }
+    .notice { padding: .9rem 1.1rem; border-left: 4px solid var(--notice-line); background: var(--notice); border-radius: .25rem; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: .6rem; padding: 1.1rem 1.2rem; margin: 1rem 0; }
+    .add { display: block; width: 100%; text-align: center; padding: 1rem; border-radius: .6rem; background: var(--accent); color: var(--accent-text); font-weight: 700; font-size: 1.1rem; text-decoration: none; }
+    .add:hover { background: var(--accent-hover); }
+    .sub-add { display: inline-block; padding: .45rem .9rem; border-radius: .45rem; border: 1px solid var(--line); background: var(--ghost); color: var(--text); text-decoration: none; font-size: .95rem; }
+    .small { color: var(--sub); font-size: .9rem; }
+    ol { padding-left: 1.3rem; } li { margin: .35rem 0; }
+    code { background: var(--code); padding: .1rem .35rem; border-radius: .25rem; font-size: .9rem; overflow-wrap: anywhere; }
+    .urlrow { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-top: .4rem; }
+    .urlrow code { flex: 1; min-width: 0; padding: .5rem .6rem; }
+    button { padding: .5rem .9rem; border-radius: .45rem; border: 1px solid var(--line); background: var(--ghost); color: var(--text); font: inherit; cursor: pointer; }
+    #copied { color: var(--accent); font-size: .9rem; min-height: 1.2em; }
+    footer { margin-top: 2.5rem; color: var(--sub); font-size: .85rem; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>MeshEraser テスト版</h1>
+  <p class="lead">テスターの方向けの導入ページです（1.1.0-beta）</p>
+
+  <h2>テストのお願い</h2>
+  <div class="card">
+    <p>テストへのご協力、ありがとうございます！</p>
+    <p>いま MeshEraser の次のアップデート（v1.1）を準備していて、発売前に実際に使ってもらい、動きを確かめたいと思っています。</p>
+    <p>やってもらいたいことは、このページの手順でテスト版を入れて、<a href="checksheet.html">確認シート</a>の項目を上から試し、ボタンで結果を選ぶだけです。<strong>期限はありません。</strong>全部やらなくても大丈夫で、できた所まで、都合のよいときに送ってもらえればとても助かります（目安は30分〜1時間くらいです）。</p>
+    <p>特に見てほしいのは、次の3つです。</p>
+    <ul>
+      <li>自分のアバターで使って、動きがおかしい所（形が伸びる、消えない、エラーが出る など）</li>
+      <li>使っていて分かりにくかった所、迷った所</li>
+      <li>ALCOM での入れ方で迷った所（正式版も同じ入れ方にする予定です）</li>
+    </ul>
+    <p>「これで合ってるのかな？」と思ったことも、そのまま書いてもらえるとうれしいです。分からないことがあれば、いつでも Discord の DM で聞いてください。</p>
+  </div>
+
+  <p class="notice"><strong>発売前のテスト版です。</strong>このページのURLやテスト版を、ほかの人に教えたり公開したりしないでください。念のため、テスト用にコピーした Unity プロジェクトで試してもらえると安心です。正式版はここでは配りません。</p>
+
+  <h2>1. ALCOM / VCC にリポジトリを追加</h2>
+  <div class="card">
+    <a class="add" href="vcc://vpm/addRepo?url=https%3A%2F%2Fhoricraft.github.io%2Fvpm-beta%2Findex.json">ALCOM / VCC に追加</a>
+    <p class="small">押すと ALCOM（または VCC）が開き、追加の確認が出ます。［追加］（Add）を押してください。<br>
+    ブラウザに「ALCOM を開きますか？」と出たら［開く］を選びます。</p>
+    <details>
+      <summary class="small">ボタンで開かないとき（手で追加する）</summary>
+      <p class="small">ALCOM の「設定」→「パッケージ」→［リポジトリを追加］に、次のURLを貼り付けてください（VCC は Settings → Packages → Add Repository）。</p>
+      <div class="urlrow">
+        <code id="repoUrl">https://horicraft.github.io/vpm-beta/index.json</code>
+        <button type="button" onclick="copyUrl()">URLをコピー</button>
+      </div>
+      <div id="copied" aria-live="polite"></div>
+    </details>
+  </div>
+
+  <h2>2. 「プレリリースパッケージを表示」をON</h2>
+  <div class="card">
+    ALCOM の「設定」→「パッケージ」で<strong>「プレリリースパッケージを表示」</strong>をONにします（VCC は Settings → Packages → Show Pre-Release Packages）。<br>
+    <span class="small">テスト版は番号に <code>-beta</code> が付いているため、OFFのままだと一覧に出てきません。</span>
+  </div>
+
+  <h2>3. プロジェクトに MeshEraser を追加</h2>
+  <div class="card">
+    <ol>
+      <li>以前の MeshEraser が入っているプロジェクトなら、Unity で <code>Assets/HoriCraft/MeshEraser</code> フォルダ<strong>だけ</strong>を削除します（1つ上の <code>HoriCraft</code> は消さないでください。消し範囲はアバター側に残ります）。</li>
+      <li>ALCOM でプロジェクトの管理画面を開き、<strong>MeshEraser</strong>（<code>1.1.0-beta</code> の付いた版）を追加します。</li>
+      <li>「NDMF が見つからない」と出たら、Modular Avatar のリポジトリも追加してください。<br>
+        <a class="sub-add" href="vcc://vpm/addRepo?url=https%3A%2F%2Fvpm.nadena.dev%2Fvpm.json">Modular Avatar（NDMF）のリポジトリを追加</a></li>
+      <li>Unity を開き、上部のメニュー <strong>HoriCraft → MeshEraser</strong> で開けば完了です。</li>
+    </ol>
+  </div>
+
+  <h2>4. 確認シートで試して、結果を送る</h2>
+  <div class="card">
+    <a class="add" href="checksheet.html">確認シートを開く</a>
+    <ol>
+      <li>最初に「あなたの環境」を書きます（Unity のバージョン、使ったアバターなど）。</li>
+      <li>上から試して、各項目の［OK］［おかしい］［できなかった］を押します。おかしいときは「何をした／何が起きた／どうなってほしかった」を短く書いてください。</li>
+      <li>最後に［結果をコピーして送る］を押し、Discord の DM に貼り付けて送ってください。スクリーンショットがあれば一緒にどうぞ（<code>Win</code>＋<code>Shift</code>＋<code>S</code> で撮れます）。</li>
+    </ol>
+    <p class="small">入力はブラウザに自動で保存されるので、途中でやめても同じブラウザで開けば続きからできます。</p>
+  </div>
+
+  <h2>製品版にする（解除）</h2>
+  <p>MeshEraser の画面の［製品版をお持ちの方：旧製品版ファイルで認証］を押し、以前 BOOTH で受け取った製品版の zip か unitypackage を選んでください。お持ちでない場合は「お試し版」のままで試せます。</p>
+
+  <h2>新しいテスト版が出たら・終わったら</h2>
+  <ul>
+    <li>新しいテスト版は、プロジェクトの管理画面で［更新］を押すだけで入れ替わります。</li>
+    <li>テストが終わったら、ALCOM の設定からこのリポジトリを削除してください。</li>
+  </ul>
+
+  <footer>HoriCraft · テスター専用ページ</footer>
+</main>
+<script>
+  function copyUrl() {
+    var text = document.getElementById('repoUrl').textContent;
+    var done = function () { document.getElementById('copied').textContent = 'コピーしました'; };
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else { fallback(); }
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents(document.getElementById('repoUrl'));
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      try { document.execCommand('copy'); done(); } catch (e) { document.getElementById('copied').textContent = 'URLを選択しました。Ctrl+Cでコピーしてください'; }
+    }
+  }
+</script>
+</body>
+</html>

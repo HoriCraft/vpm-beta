@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>MeshEraser v1.1 テスター確認シート</title>
+<style>
+  :root{
+    --bg:#1a1c20; --bg2:#22252c; --bg3:#2a2d35; --border:#383c46;
+    --primary:#4a9eff; --green:#3dba6a; --orange:#e8a030; --red:#e05555; --violet:#a78bfa;
+    --text:#dce1ec; --dim:#8f95a3; --head:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI','Hiragino Sans','Yu Gothic UI','Yu Gothic',sans-serif;background:var(--bg);color:var(--text);line-height:1.75;padding:0 0 100px}
+  header{position:sticky;top:0;z-index:10;background:linear-gradient(135deg,#1e2d45,#252832 60%,#1a1c20);border-bottom:1px solid var(--border);padding:14px 20px}
+  header h1{font-size:18px;font-weight:800;color:var(--head)}
+  header p{font-size:12px;color:var(--dim)}
+  .bar{margin-top:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .track{flex:1;min-width:160px;height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;display:flex}
+  .track div{height:100%;transition:width .2s}
+  .f-ok{background:var(--green)} .f-ng{background:var(--red)} .f-na{background:var(--orange)}
+  .count{font-size:12.5px;font-weight:700;color:var(--head)}
+  button{background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+  button:hover{background:#333844}
+  .primary-btn{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700}
+  .primary-btn:hover{background:#3a8ae8}
+
+  main{max-width:900px;margin:0 auto;padding:20px}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:13px;margin-bottom:12px}
+  .card h3{font-size:14px;color:var(--head);margin-bottom:6px}
+  .card ul,.card ol{padding-left:20px}
+  .card li{margin:3px 0}
+  .warn{border-color:#6b4a14;background:#2a2210}
+  .warn h3{color:var(--orange)}
+  details.card summary{cursor:pointer;font-weight:700;color:var(--head);font-size:14px}
+  details.card[open] summary{margin-bottom:8px}
+  dl.gloss dt{font-weight:700;color:var(--head);margin-top:6px}
+  dl.gloss dd{margin-left:0;color:var(--text)}
+
+  .env{display:grid;grid-template-columns:150px 1fr;gap:8px 12px;align-items:center}
+  .env label{font-size:12.5px;color:var(--dim)}
+  .env input{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 8px;font-family:inherit;font-size:13px;width:100%}
+  .choice{display:flex;gap:6px;flex-wrap:wrap}
+  .choice button.on{background:var(--primary);border-color:var(--primary);color:#fff}
+  @media (max-width:560px){ .env{grid-template-columns:1fr} }
+
+  section{margin:26px 0}
+  h2{font-size:16px;font-weight:700;color:var(--head);border-bottom:2px solid var(--primary);padding-bottom:6px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  h2 .sc{font-size:11px;color:var(--dim);font-weight:600;white-space:nowrap}
+  .goal{font-size:12.5px;color:var(--dim);margin:6px 0 12px}
+
+  .item{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:8px}
+  .item.r-ok{border-left-color:var(--green)}
+  .item.r-ok .main{opacity:.55}
+  .item.r-ng{border-left-color:var(--red);background:#2a1d1f}
+  .item.r-na{border-left-color:var(--orange)}
+  .item.hidden{display:none}
+  .t{font-size:14px;font-weight:700;color:var(--head)}
+  .num{display:inline-block;min-width:26px;font-size:11px;color:var(--dim);font-family:Consolas,monospace}
+  .pro{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;margin-left:6px;vertical-align:2px;background:#2e2a3e;color:var(--violet)}
+  .how{font-size:13px;margin-top:6px;display:flex;gap:8px}
+  .how b{flex-shrink:0;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:3px;height:fit-content;margin-top:3px;white-space:nowrap;min-width:64px;text-align:center}
+  .k-do{background:#1a2e4a;color:var(--primary)}
+  .k-ok{background:#1e3a24;color:var(--green)}
+  .k-pre{background:#2e2a3e;color:var(--violet)}
+  kbd{background:#3a3f4b;border:1px solid #555b68;border-bottom-width:2px;border-radius:4px;padding:0 5px;font-family:Consolas,monospace;font-size:12px;color:#fff}
+  .res{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+  .res button{min-width:92px;font-weight:700}
+  .res button.ok.on{background:var(--green);border-color:var(--green);color:#fff}
+  .res button.ng.on{background:var(--red);border-color:var(--red);color:#fff}
+  .res button.na.on{background:var(--orange);border-color:var(--orange);color:#1a1c20}
+  .detail{display:none;margin-top:10px;gap:6px;flex-direction:column}
+  .item.r-ng .detail,.item.r-na .detail{display:flex}
+  .detail label{font-size:12px;color:var(--dim)}
+  .detail textarea{width:100%;min-height:44px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 8px;font-family:inherit;font-size:13px;resize:vertical}
+  .free textarea{width:100%;min-height:120px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px;font-family:inherit;font-size:13px}
+
+  #report{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:20;padding:16px}
+  #report.show{display:flex}
+  #report .box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;max-width:760px;width:100%}
+  #report textarea{width:100%;height:50vh;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px;font-family:Consolas,'Yu Gothic UI',monospace;font-size:12px}
+  #report .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;align-items:center}
+  #copied{font-size:12px;color:var(--green)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MeshEraser v1.1 テスター確認シート</h1>
+  <p>テスト版をさわって、動きを教えてもらうためのシートです。入力はこのブラウザに自動保存されます。</p>
+  <div class="bar">
+    <div class="track"><div class="f-ok" id="fOk"></div><div class="f-ng" id="fNg"></div><div class="f-na" id="fNa"></div></div>
+    <div class="count" id="count"></div>
+    <button class="primary-btn" onclick="openReport()">結果をコピーして送る</button>
+  </div>
+</header>
+
+<main>
+
+<div class="card warn">
+  <h3>最初にお願い</h3>
+  <ul>
+    <li>このテスト版は<b>発売前の製品</b>です。ほかの人に渡したり、公開したりしないでください。</li>
+    <li>アバターを直接書き換えない作りですが、念のため<b>テスト用にコピーしたUnityプロジェクト</b>で試してください。</li>
+    <li>全部やらなくて大丈夫です。できた所まで送ってもらえれば十分に助かります。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>使い方</h3>
+  <ol>
+    <li>下の「あなたの環境」を1回だけ書く</li>
+    <li>上から順に「やること」を試し、結果を <b>［OK］［おかしい］［できなかった］</b> から1つ押す</li>
+    <li>［おかしい］［できなかった］のときは、出てくる3つの欄に<b>何をした／何が起きた／本当はどうなってほしかった</b>を書く（短くてOK）</li>
+    <li>最後に<b>［結果をコピーして送る］</b>を押し、DiscordのDMに貼り付けて送る。スクリーンショットがあれば一緒に送ってください（<kbd>Win</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> で撮れます）</li>
+  </ol>
+  「OK」かどうか迷ったら、<b>［おかしい］を押して感じたことを書く</b>のが一番助かります。</div>
+
+<details class="card">
+  <summary>準備するもの・入れ方</summary>
+  <ul>
+    <li>Unity 2022.3（VRChatのアバター用プロジェクト）、VRChat SDK（Avatars）、Modular Avatar</li>
+    <li>メニューのON/OFFを試すなら <b>Gesture Manager</b>（無料。VCC/ALCOMから追加できます）</li>
+    <li>服を1着以上着たアバター。シェイプキー（体型の調整用）がある服だとなお良い</li>
+    <li><b>入れ方（ALCOM / VCC）:</b>
+      <ol>
+        <li>前のMeshEraserが入っているプロジェクトなら、Unityで <code>Assets/HoriCraft/MeshEraser</code> フォルダ<b>だけ</b>を削除（1つ上の <code>HoriCraft</code> は消さない。消し範囲はアバター側に残ります）</li>
+        <li>ALCOMの「設定」→「パッケージ」の［リポジトリを追加］に <code>https://horicraft.github.io/vpm-beta/index.json</code> を入れて追加（VCCは Settings → Packages → Add Repository）</li>
+        <li>同じ設定画面で<b>「プレリリースパッケージを表示」をON</b>（テスト版は番号に -beta が付くため、OFFだと一覧に出ません）</li>
+        <li>プロジェクトの管理画面で MeshEraser（<code>1.1.0-beta.1</code>）を追加。NDMFが無いと言われたら、Modular Avatar のリポジトリ <code>https://vpm.nadena.dev/vpm.json</code> も追加</li>
+      </ol>
+      新しいテスト版を出したときは、同じ画面の［更新］だけで入れ替わります。テストが終わったら、このリポジトリは設定から削除してください。</li>
+    <li><b>解除（製品版にする）:</b> MeshEraserの画面にある［製品版をお持ちの方：旧製品版ファイルで認証］を押し、以前BOOTHで受け取った製品版のzipかunitypackageを選びます。製品版を持っていない場合は「お試し版」のままでOKです（③の完了やメニュー作成の項目は自動で隠れます）</li>
+  </ul>
+</details>
+
+<details class="card">
+  <summary>言葉の説明</summary>
+  <dl class="gloss">
+    <dt>Hierarchy（ヒエラルキー）</dt><dd>Unity画面の左側にある、シーンの中身の一覧。</dd>
+    <dt>Sceneビュー</dt><dd>アバターが表示されている真ん中の大きな画面。</dd>
+    <dt>Console（コンソール）</dt><dd>エラーが出る場所。Window → General → Console。赤い行があればスクショしてください。</dd>
+    <dt>ハイライト</dt><dd>編集中のメッシュに重ねて表示される色。</dd>
+    <dt>トグル</dt><dd>VRChatのメニューで、消した部分を出したり消したりできるボタン。</dd>
+    <dt>Play（プレイ）</dt><dd>Unity上部の ▶ ボタン。ゲームを動かした状態で確認できます。</dd>
+    <dt>Gesture Manager</dt><dd>Playの中でVRChatのメニューを操作できる無料ツール。</dd>
+  </dl>
+</details>
+
+<div class="card">
+  <h3>あなたの環境</h3>
+  <div class="env">
+    <label for="env-unity">Unityのバージョン</label><input id="env-unity" placeholder="例：2022.3.22f1（Unity画面の一番上に出ています）">
+    <label for="env-avatar">使ったアバター</label><input id="env-avatar" placeholder="例：〇〇ちゃん＋△△の服">
+    <label for="env-ma">Modular Avatar</label><input id="env-ma" placeholder="例：1.18.3（分からなければ空欄でOK）">
+    <label>MeshEraserの状態</label>
+    <div class="choice" id="env-edition">
+      <button data-v="pro">製品版（解除できた）</button>
+      <button data-v="trial">お試し版のまま</button>
+    </div>
+  </div>
+</div>
+
+<div id="sections"></div>
+
+<section class="free">
+  <h2>自由に使って気づいたこと</h2>
+  <div class="goal">分かりにくかった所、迷った所、「こうだったらいいのに」、なんでも書いてください。</div>
+  <textarea id="free" placeholder="例：③で「完了」を押したあと、次に何をすればいいか分からなかった"></textarea>
+</section>
+
+</main>
+
+<div id="report"><div class="box">
+  <div style="font-weight:700;color:#fff;margin-bottom:8px">送る内容（このままDiscordのDMに貼り付けてください）</div>
+  <textarea id="reportText" readonly></textarea>
+  <div class="row"><span id="copied"></span><button onclick="closeReport()">閉じる</button><button class="primary-btn" onclick="copyReport()">コピー</button></div>
+</div></div>
+
+<script>
+/* pro:true は「製品版で解除したときだけ試せる」項目。お試し版を選ぶと隠す */
+const SECTIONS = [
+{ name:"A. 開いて、消したいメッシュを選ぶ", goal:"MeshEraserを開いて、アバターと消したいメッシュ（素体など）を選べるか。", items:[
+ {id:"A1", t:"MeshEraserを開く", do:"Unity上部のメニュー HoriCraft → MeshEraser を押す", ok:"MeshEraserの画面が開く。Consoleに赤いエラーが出ない"},
+ {id:"A2", t:"アバターを選ぶ", do:"シーンにアバターが2体以上あるなら、「アバターを選んでください：」の下の選択欄で切り替える。そのすぐ下の欄に、Hierarchyからアバターをドラッグして落としてもみる", ok:"選んだアバターに切り替わる。アバター以外の物を落とすと、断る案内が出る"},
+ {id:"A3", t:"消したいメッシュを選ぶ", do:"Sceneビューでアバターにマウスを乗せてから、消したいメッシュ（服から素体がはみ出している部分など）をクリック", ok:"マウスを乗せたメッシュが光り、クリックすると「② 塗る」の画面に進む"},
+ {id:"A4", t:"Inspectorから始める", do:"Hierarchyでメッシュ（Bodyなど）を選び、右側のInspectorで Add Component → HoriCraft → MeshEraser → 出てきた［このメッシュを編集］を押す", ok:"MeshEraserが開き、そのメッシュを塗る画面になっている"},
+ {id:"A5", t:"閉じて開き直すと続きから", do:"少し塗ったあとMeshEraserの画面を閉じ、もう一度 HoriCraft → MeshEraser で開く", ok:"さっきのメッシュの続きから始まる。［最初から選ぶ］を押すと選び直せる"},
+]},
+{ name:"B. 塗って消す", goal:"ブラシでこすって、消したい所だけを消せるか。見た目の切り替えが分かりやすいか。", items:[
+ {id:"B1", t:"こすって消す", do:"消したい所を左ドラッグでこする。右ドラッグで回転、ホイールでズームもしてみる", ok:"こすった所がすぐ消える。回転・ズームは普段どおりできる"},
+ {id:"B2", t:"ブラシ・四角・円", do:"ツールを ブラシ／四角形／円形 に切り替えて、それぞれ小さく消してみる", ok:"それぞれの形で消える"},
+ {id:"B3", t:"服の下を消さない（露出だけ）", do:"消す範囲を「露出だけ」にして、服のふちギリギリをこする", ok:"見えている所だけ消え、服の下に隠れている部分は消えない"},
+ {id:"B4", t:"左右対称", do:"「左右対称に消す（Xミラー）」をONにして片側をこする", ok:"反対側も同じ形に消える"},
+ {id:"B5", t:"戻す・やり直す", do:"［復元］にして消した所をこする → <kbd>Ctrl</kbd>+<kbd>Z</kbd>（元に戻す）→ <kbd>Ctrl</kbd>+<kbd>Y</kbd>（やり直す）", ok:"こすった所が戻る。Ctrl+Z／Ctrl+Yで1操作ずつ戻る・進む"},
+ {id:"B6", t:"消した所を色で確認（Cキー）", do:"「消した色」の行で色を選ぶ。そのあと <kbd>C</kbd> キーを何回か押す（Sceneビューを選んだ状態と、MeshEraserの画面を選んだ状態の両方で）", ok:"消した部分が色付きで見え、Cで表示・非表示が切り替わる。行の右端に「Cキーで切替」と出ている"},
+ {id:"B7", t:"ハイライトの切り替え（Hキー）", do:"<kbd>H</kbd> キーを何回か押す（Sceneビューを選んだ状態と、MeshEraserの画面を選んだ状態の両方で）", ok:"メッシュに重なっている色だけが出たり消えたりする。Cで出した「消した色」は変わらない"},
+ {id:"B8", t:"丸ごと消す", do:"［丸ごと消す（このメッシュ全体を選択）］を押す → もう一度押す", ok:"メッシュ全体が消え、もう一度押すと戻る。このボタンと下の青い［次へ］の違いが分かる"},
+]},
+{ name:"C. 完全に消す（アップロード時に消える）", goal:"塗った所を、アップロードしたアバターから本当に取り除けるか。", items:[
+ {id:"C1", t:"完全に削除で完了", pro:true, do:"［次へ］→ ③で「完全に削除」を選ぶ →［完了］", ok:"完了の案内が出る。エディタの見た目はそのまま"},
+ {id:"C2", t:"Playで消えている", pro:true, do:"Unity上部の ▶（Play）を押して、SceneとGameを見る → もう一度押して戻る", ok:"塗った所が消えている。顔や体が伸びたり崩れたりしない。MeshEraserの画面は自動で閉じる"},
+ {id:"C3", t:"作成済みタブで削除すると元に戻る", do:"「作成済み」タブを開き、その消し範囲の［削除］を押す", ok:"消した部分が元通りに見える。Hierarchyに MeshEraser の名前が付いた物が残っていない（残っていたら名前を書いてください）"},
+]},
+{ name:"D. メニューでON/OFFできるようにする", goal:"VRChatのメニューから、消した部分・服・体型を切り替えられるか。", items:[
+ {id:"D1", t:"トグルを作る", pro:true, do:"塗ってから③で「メニューでON/OFF」を選び、メニュー名を入れて［完了］", ok:"Hierarchyのアバターのすぐ下に、メニュー名のオブジェクトができる"},
+ {id:"D2", t:"ゲーム開始時の状態（★）", pro:true, do:"③の表の見出し［メニューON］［メニューOFF］を交互に押す", ok:"押した列に★が移る。★の列が「ゲームを始めたときの状態」だと分かる"},
+ {id:"D3", t:"服も一緒に切り替える", pro:true, do:"表の下の「↑ の表に加えるもの」の「服」で［シーンの服をクリックして追加］→ シーンで服をクリック → 上の表の服の行で「表示/非表示」を押す", ok:"追加した服が上の表に現れて一瞬光る。押すと表示/非表示が入れ替わる"},
+ {id:"D4", t:"シェイプキーも一緒に切り替える", pro:true, do:"同じカードの「シェイプキー」で［＋ シェイプキーを追加］→ メッシュとシェイプキーを選ぶ → 上の表のその行の「100」「0」を押す", ok:"選び終えると上の表にその行が現れて一瞬光る。押すとメニューON/OFFのときの値が入れ替わる"},
+ {id:"D5", t:"Playでメニューを操作", pro:true, pre:"Gesture Managerが入っている", do:"▶（Play）→ Gesture Managerでメニューを開き、作ったトグルをON/OFF", ok:"消した部分・服・シェイプキーが、③の表のとおりに切り替わる。始めたときの状態は★の列どおり"},
+ {id:"D6", t:"完全に削除とトグルを両方使う", pro:true, do:"同じメッシュで、1か所を「完全に削除」、別の場所を「メニューでON/OFF」にしてPlay", ok:"完全に削除した所はずっと消えたまま、トグルの所だけ切り替わる"},
+ {id:"D7", t:"丸ごとトグル", pro:true, do:"髪などのパーツで［丸ごと消す］→ ③で「メニューでON/OFF」→［完了］→ ③の一番下の赤いボタン［この消し範囲を削除（元に戻す）］", ok:"トグルが作れて、赤いボタンで完全に元に戻る"},
+ {id:"D8", t:"同じ名前のメニュー", pro:true, do:"別のメッシュで、すでにあるトグルと同じメニュー名を入れて［完了］", ok:"完了前に「〇〇(1)になります」と案内が出て、別のボタンとして作られる"},
+]},
+{ name:"E. メニュータブで作ったトグルを直す", goal:"一度作ったトグルを、あとから直せるか。", items:[
+ {id:"E1", t:"名前を変える", pro:true, do:"「メニュー」タブでトグルを選び、メニュー名を書き換える", ok:"Hierarchyのオブジェクト名も同じ名前に変わる"},
+ {id:"E2", t:"範囲を足す", pro:true, do:"［範囲を編集］→ 少し塗り足す →［完了］", ok:"同じトグルに塗り足した所が入る"},
+ {id:"E3", t:"まとめる・分ける", pro:true, pre:"トグルが2つ以上ある", do:"「〇〇にまとめる」を押す → ［別ボタンに分ける］を押す", ok:"2つが1つのボタンになり、分けると元の2つに戻る"},
+ {id:"E4", t:"服・シェイプキーのカード", pro:true, do:"メニュータブでも「↑ の表に加えるもの」で服やシェイプキーを追加する", ok:"③と同じ見た目・同じ動きで追加できる"},
+]},
+{ name:"F. 元に戻す（Ctrl+Z）", goal:"失敗しても Ctrl+Z で元に戻せるか。画面だけでなく、Playしたときの動きも戻るか。", items:[
+ {id:"F1", t:"服・シェイプキーの設定を戻す", pro:true, do:"服かシェイプキーの「表示/非表示」「100/0」を切り替える → <kbd>Ctrl</kbd>+<kbd>Z</kbd> → Playで確認", ok:"画面もPlayの動きも元に戻る"},
+ {id:"F2", t:"トグルに範囲を足したのを戻す", pro:true, do:"すでにあるトグルと同じ名前で別の範囲を追加して完了 → <kbd>Ctrl</kbd>+<kbd>Z</kbd>", ok:"追加前に戻り、最初の範囲は残っている"},
+ {id:"F3", t:"まとめる・分けるを戻す", pro:true, do:"まとめる → <kbd>Ctrl</kbd>+<kbd>Z</kbd>。分ける → <kbd>Ctrl</kbd>+<kbd>Z</kbd>", ok:"元のボタン構成に戻る。Hierarchyに余計な物や「Missing」が残らない"},
+ {id:"F4", t:"開始時の★を戻す", pro:true, do:"★の列を変える → <kbd>Ctrl</kbd>+<kbd>Z</kbd> → Play", ok:"画面の★と、Playを始めたときの状態が同じ"},
+]},
+{ name:"G. 閉じたあと・Play・保存", goal:"MeshEraserを閉じても、Playしても、保存して開き直しても、状態がおかしくならないか。", items:[
+ {id:"G1", t:"閉じても消えた見た目のまま", do:"「ツールを閉じても「消した後の姿」で表示」がONのまま、MeshEraserの画面を閉じる", ok:"閉じても消えた見た目のまま。同じ場所に2重に見えない"},
+ {id:"G2", t:"開いたままPlay", do:"MeshEraserを開いて塗った状態のまま ▶（Play）→ SceneとGameを見る → Playを止める", ok:"MeshEraserが自動で閉じ、顔や体が伸びない。止めたあとも見た目が崩れない"},
+ {id:"G3", t:"Play中に開こうとする", do:"Play中に HoriCraft → MeshEraser を押す", ok:"「Playモード中はMeshEraserを開けません…」と案内が出る"},
+ {id:"G4", t:"保存して開き直す", do:"シーンを保存（<kbd>Ctrl</kbd>+<kbd>S</kbd>）→ 別のシーンを開く → 元のシーンに戻る", ok:"消した範囲やトグルの設定が残っている。見た目が崩れていない"},
+ {id:"G5", t:"Unityを再起動", do:"保存してUnityを終了 → もう一度開いて同じシーンを開く", ok:"消した範囲やトグルの設定が残っている"},
+ {id:"G6", t:"ほかのツールと一緒に使う", pre:"Modular Avatar の Shape Changer や Scale Adjuster を使っているアバター", do:"MeshEraserを開く・閉じる・Playを一通り試す", ok:"形が2重になったり、伸びたりしない"},
+]},
+{ name:"H. 表示・言語", goal:"文字が読めるか、画面が崩れないか。", items:[
+ {id:"H1", t:"言語の切り替え", do:"MeshEraserの画面上部の Language を English → 中文 → 한국어 → 日本語 と切り替えて、各画面を見る", ok:"文字が切れたり、文字化けしたりしない"},
+ {id:"H2", t:"画面を細くする", do:"MeshEraserの画面の幅をできるだけ狭くする", ok:"ボタンの文字が読め、画面の外にはみ出さない"},
+ {id:"H3", t:"Prefabモード", do:"アバターのPrefabをダブルクリックしてPrefabモードに入り、MeshEraserで対象を見る → 元のシーンに戻る", ok:"見た目が崩れず、消した範囲が混ざらない"},
+]},
+{ name:"I. VRChatにアップロード（任意）", goal:"実際のVRChatで動くか。時間があるときだけで大丈夫です。", items:[
+ {id:"I1", t:"アップロードして確認", pro:true, do:"トグルを作ったアバターをアップロード → VRChatでメニューを操作 → 入り直す", ok:"消した部分・服・シェイプキーがメニューどおりに切り替わる。入り直したときの状態が★どおり"},
+]},
+];
+
+const KEY = 'mesheraser-v1.1-tester-sheet';
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e) { state = {}; }
+state.items ??= {}; state.env ??= {};
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+// ---- 環境 ----
+['unity','avatar','ma'].forEach(k => {
+  const el = document.getElementById('env-' + k);
+  el.value = state.env[k] || '';
+  el.addEventListener('input', () => { state.env[k] = el.value; save(); });
+});
+const edBtns = [...document.querySelectorAll('#env-edition button')];
+function paintEdition(){ edBtns.forEach(b => b.classList.toggle('on', b.dataset.v === state.env.edition)); }
+edBtns.forEach(b => b.addEventListener('click', () => { state.env.edition = b.dataset.v; save(); paintEdition(); applyEdition(); update(); }));
+
+// ---- 項目 ----
+const root = document.getElementById('sections');
+let n = 0;
+SECTIONS.forEach(s => {
+  const sec = document.createElement('section');
+  let h = `<h2>${s.name} <span class="sc"></span></h2><div class="goal">${s.goal}</div>`;
+  s.items.forEach(it => {
+    n++;
+    h += `<div class="item" data-id="${it.id}" data-pro="${it.pro ? 1 : 0}">
+      <div class="main">
+        <div class="t"><span class="num">${it.id}</span>${it.t}${it.pro ? '<span class="pro">製品版で</span>' : ''}</div>
+        ${it.pre ? `<div class="how"><b class="k-pre">この場合だけ</b><span>${it.pre}</span></div>` : ''}
+        <div class="how"><b class="k-do">やること</b><span>${it.do}</span></div>
+        <div class="how"><b class="k-ok">こうなればOK</b><span>${it.ok}</span></div>
+      </div>
+      <div class="res">
+        <button class="ok" data-r="ok">OK</button>
+        <button class="ng" data-r="ng">おかしい</button>
+        <button class="na" data-r="na">できなかった</button>
+      </div>
+      <div class="detail">
+        <label>何をした（直前の操作）</label><textarea data-f="did" placeholder="例：③で［完了］を押したあと、Playを押した"></textarea>
+        <label>何が起きた（見えたこと・エラー）</label><textarea data-f="saw" placeholder="例：左手だけ細く伸びた／Consoleに赤いエラーが出た"></textarea>
+        <label>本当はどうなってほしかった</label><textarea data-f="want" placeholder="例：伸びずにそのまま表示されてほしかった"></textarea>
+      </div>
+    </div>`;
+  });
+  sec.innerHTML = h;
+  root.appendChild(sec);
+});
+
+document.querySelectorAll('.item').forEach(el => {
+  const id = el.dataset.id;
+  const st = () => (state.items[id] ??= {r:'', did:'', saw:'', want:''});
+  el.querySelectorAll('textarea').forEach(ta => {
+    ta.value = (state.items[id] || {})[ta.dataset.f] || '';
+    ta.addEventListener('input', () => { st()[ta.dataset.f] = ta.value; save(); });
+  });
+  el.querySelectorAll('.res button').forEach(b => b.addEventListener('click', () => {
+    const cur = st();
+    cur.r = cur.r === b.dataset.r ? '' : b.dataset.r;
+    save(); paint(el); update();
+    if (cur.r === 'ng' || cur.r === 'na') el.querySelector('textarea').focus();
+  }));
+  paint(el);
+});
+
+function paint(el){
+  const r = (state.items[el.dataset.id] || {}).r || '';
+  el.classList.remove('r-ok','r-ng','r-na');
+  if (r) el.classList.add('r-' + r);
+  el.querySelectorAll('.res button').forEach(b => b.classList.toggle('on', b.dataset.r === r));
+}
+
+function applyEdition(){
+  const trial = state.env.edition === 'trial';
+  document.querySelectorAll('.item').forEach(el => el.classList.toggle('hidden', trial && el.dataset.pro === '1'));
+  document.querySelectorAll('#sections section').forEach(s => {
+    s.style.display = s.querySelector('.item:not(.hidden)') ? '' : 'none';
+  });
+}
+
+function visibleItems(){ return [...document.querySelectorAll('.item:not(.hidden)')]; }
+
+function update(){
+  const items = visibleItems();
+  const total = items.length || 1;
+  const c = {ok:0, ng:0, na:0};
+  items.forEach(el => { const r = (state.items[el.dataset.id] || {}).r; if (c[r] !== undefined) c[r]++; });
+  document.getElementById('count').textContent =
+    `${c.ok + c.ng + c.na} / ${items.length} ・ OK ${c.ok} ・ おかしい ${c.ng} ・ できなかった ${c.na}`;
+  document.getElementById('fOk').style.width = (c.ok / total * 100) + '%';
+  document.getElementById('fNg').style.width = (c.ng / total * 100) + '%';
+  document.getElementById('fNa').style.width = (c.na / total * 100) + '%';
+  document.querySelectorAll('#sections section').forEach(s => {
+    const all = [...s.querySelectorAll('.item:not(.hidden)')];
+    const d = all.filter(el => (state.items[el.dataset.id] || {}).r).length;
+    s.querySelector('.sc').textContent = d + ' / ' + all.length;
+  });
+}
+
+const free = document.getElementById('free');
+free.value = state.free || '';
+free.addEventListener('input', () => { state.free = free.value; save(); });
+
+function plain(html){ const d = document.createElement('div'); d.innerHTML = html; return d.textContent; }
+function openReport(){
+  const e = state.env;
+  const L = ['【MeshEraser v1.1 テスト結果】',
+    `Unity: ${e.unity || '未記入'} / アバター: ${e.avatar || '未記入'} / MA: ${e.ma || '未記入'} / 状態: ${e.edition === 'pro' ? '製品版' : e.edition === 'trial' ? 'お試し版' : '未選択'}`];
+  const vis = new Set(visibleItems().map(el => el.dataset.id));
+  const groups = {ok:[], ng:[], na:[], todo:[]};
+  SECTIONS.forEach(s => s.items.forEach(it => {
+    if (!vis.has(it.id)) return;
+    const st = state.items[it.id] || {};
+    (groups[st.r] || groups.todo).push({it, st});
+  }));
+  L.push(`OK ${groups.ok.length} / おかしい ${groups.ng.length} / できなかった ${groups.na.length} / 未実施 ${groups.todo.length}`);
+  const detail = (title, arr) => {
+    if (!arr.length) return;
+    L.push('', title);
+    arr.forEach(({it, st}) => {
+      L.push(`・${it.id} ${plain(it.t)}`);
+      L.push(`  した：${(st.did || '').trim() || '（未記入）'}`);
+      L.push(`  起きた：${(st.saw || '').trim() || '（未記入）'}`);
+      L.push(`  ほしかった：${(st.want || '').trim() || '（未記入）'}`);
+    });
+  };
+  detail('■ おかしかった所', groups.ng);
+  detail('■ できなかった所', groups.na);
+  if ((state.free || '').trim()) L.push('', '■ 気づいたこと', state.free.trim());
+  L.push('', 'OKだった項目：' + (groups.ok.map(x => x.it.id).join(', ') || 'なし'));
+  document.getElementById('reportText').value = L.join('\n');
+  document.getElementById('copied').textContent = '';
+  document.getElementById('report').classList.add('show');
+}
+function closeReport(){ document.getElementById('report').classList.remove('show'); }
+function copyReport(){
+  const ta = document.getElementById('reportText');
+  const done = () => document.getElementById('copied').textContent = 'コピーしました。DiscordのDMに貼り付けてください';
+  if (navigator.clipboard) navigator.clipboard.writeText(ta.value).then(done, () => { ta.select(); document.execCommand('copy'); done(); });
+  else { ta.select(); document.execCommand('copy'); done(); }
+}
+document.getElementById('report').addEventListener('click', e => { if (e.target.id === 'report') closeReport(); });
+
+paintEdition(); applyEdition(); update();
+</script>
+</body>
+</html>
